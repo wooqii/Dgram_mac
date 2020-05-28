@@ -1,0 +1,7 @@
+{
+    "prettier.requireConfig": true,
+    "prettier.withNodeModules": true,
+    "prettier.resolveGlobalModules": true,
+    "prettier.packageManager": "yarn",
+    "prettier.singleQuote": true
+}

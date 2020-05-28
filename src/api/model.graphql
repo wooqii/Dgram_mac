@@ -1,0 +1,59 @@
+type User {
+  id: ID! 
+  avatar: String
+  username: String! 
+  email: String! 
+  firstName: String 
+  lastName: String
+  bio: String
+  following: [User!]! 
+  followers: [User!]! 
+  posts: [Post!]!
+  likes: [Like!]! 
+  comments: [Comment!]! 
+  chat: [Chat!]!
+  loginSecret: String!
+}
+
+type Post {
+  id: ID! 
+  location: String
+  caption: String!
+  creator: User 
+  files: [File!]! 
+  likes: [Like!]! 
+  comments: [Comment!]! 
+}
+
+type Like {
+  id: ID! 
+  user: User 
+  post: Post 
+}
+
+type Comment {
+  id: ID! 
+  text: String!
+  user: User 
+  post: Post 
+}
+
+type File {
+  id: ID! 
+  url: String!
+  post: Post 
+}
+
+type Chat {
+  id: ID! 
+  participants: [User!]!
+  messages: [Message!]!
+}
+
+type Message {
+  id: ID! 
+  text: String!
+  from: User!
+  to: User! 
+  chat: Chat!
+}

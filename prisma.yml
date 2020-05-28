@@ -1,0 +1,6 @@
+endpoint: https://us1.prisma.sh/dgram-mac/Dgram_mac/dev
+datamodel: datamodel.prisma
+
+generate:
+  - generator: javascript-client
+    output: ./generated/prisma-client/
