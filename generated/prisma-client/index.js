@@ -25,7 +25,7 @@ var models = [
     embedded: false
   },
   {
-    name: "Room",
+    name: "Chat",
     embedded: false
   },
   {
@@ -36,6 +36,6 @@ var models = [
 exports.Prisma = prisma_lib_1.makePrismaClientClass({
   typeDefs,
   models,
-  endpoint: `https://us1.prisma.sh/dgram-mac/Dgram_mac/dev`
+  endpoint: `https://us1.prisma.sh/luckydong-eb0a75/Dgram_mac/dev`
 });
 exports.prisma = new exports.Prisma();

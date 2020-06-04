@@ -1,4 +1,4 @@
-endpoint: https://us1.prisma.sh/dgram-mac/Dgram_mac/dev
+endpoint: https://us1.prisma.sh/luckydong-eb0a75/Dgram_mac/dev
 datamodel: datamodel.prisma
 
 generate:

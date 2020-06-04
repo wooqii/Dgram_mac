@@ -1,59 +1,77 @@
 type User {
-  id: ID! 
-  avatar: String
-  username: String! 
-  email: String! 
-  firstName: String 
+  id: ID!
+	avatar: String
+  username: String!
+  email: String!
+  firstName: String
   lastName: String
+  fullName: String
+  isFollowing: Boolean!
+  isSelf: Boolean!
   bio: String
-  following: [User!]! 
-  followers: [User!]! 
+  following: [User!]!
+  followers: [User!]!
   posts: [Post!]!
-  likes: [Like!]! 
-  comments: [Comment!]! 
+  likes: [Like!]!
+  comments: [Comment!]!
   chat: [Chat!]!
   loginSecret: String!
 }
 
 type Post {
-  id: ID! 
+  id: ID!
   location: String
   caption: String!
-  creator: User 
-  files: [File!]! 
-  likes: [Like!]! 
-  comments: [Comment!]! 
+  creator: User!
+  files: [File!]!
+  likes: [Like!]!
+  comments: [Comment!]!
+  isLiked: Boolean!
+  likeCount: Int!
+  createdAt: String
+  updatedAt: String
 }
 
 type Like {
-  id: ID! 
-  user: User 
-  post: Post 
+  id: ID!
+  user: User!
+  post: Post!
+  createdAt: String
+  updatedAt: String
 }
 
 type Comment {
-  id: ID! 
+  id: ID!
   text: String!
-  user: User 
-  post: Post 
+  user: User!
+  post: Post!
+  createdAt: String
+  updatedAt: String
 }
 
 type File {
-  id: ID! 
+  id: ID!
   url: String!
-  post: Post 
+  post: Post!
+  createdAt: String
+  updatedAt: String
 }
 
 type Chat {
-  id: ID! 
+  id: ID!
   participants: [User!]!
   messages: [Message!]!
 }
 
 type Message {
-  id: ID! 
+  id: ID!
   text: String!
   from: User!
-  to: User! 
+  to: User!
   chat: Chat!
+}
+
+type UserProfile {
+  user: User!
+  posts: [Post!]!
 }

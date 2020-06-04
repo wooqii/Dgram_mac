@@ -3,7 +3,11 @@ module.exports = {
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-/* GraphQL */ `type AggregateComment {
+/* GraphQL */ `type AggregateChat {
+  count: Int!
+}
+
+type AggregateComment {
   count: Int!
 }
 
@@ -23,10 +27,6 @@ type AggregatePost {
   count: Int!
 }
 
-type AggregateRoom {
-  count: Int!
-}
-
 type AggregateUser {
   count: Int!
 }
@@ -35,11 +35,180 @@ type BatchPayload {
   count: Long!
 }
 
+type Chat {
+  id: ID!
+  participants(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+}
+
+type ChatConnection {
+  pageInfo: PageInfo!
+  edges: [ChatEdge]!
+  aggregate: AggregateChat!
+}
+
+input ChatCreateInput {
+  id: ID
+  participants: UserCreateManyWithoutChatInput
+  messages: MessageCreateManyWithoutChatInput
+}
+
+input ChatCreateManyWithoutParticipantsInput {
+  create: [ChatCreateWithoutParticipantsInput!]
+  connect: [ChatWhereUniqueInput!]
+}
+
+input ChatCreateOneWithoutMessagesInput {
+  create: ChatCreateWithoutMessagesInput
+  connect: ChatWhereUniqueInput
+}
+
+input ChatCreateWithoutMessagesInput {
+  id: ID
+  participants: UserCreateManyWithoutChatInput
+}
+
+input ChatCreateWithoutParticipantsInput {
+  id: ID
+  messages: MessageCreateManyWithoutChatInput
+}
+
+type ChatEdge {
+  node: Chat!
+  cursor: String!
+}
+
+enum ChatOrderByInput {
+  id_ASC
+  id_DESC
+}
+
+type ChatPreviousValues {
+  id: ID!
+}
+
+input ChatScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [ChatScalarWhereInput!]
+  OR: [ChatScalarWhereInput!]
+  NOT: [ChatScalarWhereInput!]
+}
+
+type ChatSubscriptionPayload {
+  mutation: MutationType!
+  node: Chat
+  updatedFields: [String!]
+  previousValues: ChatPreviousValues
+}
+
+input ChatSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: ChatWhereInput
+  AND: [ChatSubscriptionWhereInput!]
+  OR: [ChatSubscriptionWhereInput!]
+  NOT: [ChatSubscriptionWhereInput!]
+}
+
+input ChatUpdateInput {
+  participants: UserUpdateManyWithoutChatInput
+  messages: MessageUpdateManyWithoutChatInput
+}
+
+input ChatUpdateManyWithoutParticipantsInput {
+  create: [ChatCreateWithoutParticipantsInput!]
+  delete: [ChatWhereUniqueInput!]
+  connect: [ChatWhereUniqueInput!]
+  set: [ChatWhereUniqueInput!]
+  disconnect: [ChatWhereUniqueInput!]
+  update: [ChatUpdateWithWhereUniqueWithoutParticipantsInput!]
+  upsert: [ChatUpsertWithWhereUniqueWithoutParticipantsInput!]
+  deleteMany: [ChatScalarWhereInput!]
+}
+
+input ChatUpdateOneRequiredWithoutMessagesInput {
+  create: ChatCreateWithoutMessagesInput
+  update: ChatUpdateWithoutMessagesDataInput
+  upsert: ChatUpsertWithoutMessagesInput
+  connect: ChatWhereUniqueInput
+}
+
+input ChatUpdateWithoutMessagesDataInput {
+  participants: UserUpdateManyWithoutChatInput
+}
+
+input ChatUpdateWithoutParticipantsDataInput {
+  messages: MessageUpdateManyWithoutChatInput
+}
+
+input ChatUpdateWithWhereUniqueWithoutParticipantsInput {
+  where: ChatWhereUniqueInput!
+  data: ChatUpdateWithoutParticipantsDataInput!
+}
+
+input ChatUpsertWithoutMessagesInput {
+  update: ChatUpdateWithoutMessagesDataInput!
+  create: ChatCreateWithoutMessagesInput!
+}
+
+input ChatUpsertWithWhereUniqueWithoutParticipantsInput {
+  where: ChatWhereUniqueInput!
+  update: ChatUpdateWithoutParticipantsDataInput!
+  create: ChatCreateWithoutParticipantsInput!
+}
+
+input ChatWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  participants_every: UserWhereInput
+  participants_some: UserWhereInput
+  participants_none: UserWhereInput
+  messages_every: MessageWhereInput
+  messages_some: MessageWhereInput
+  messages_none: MessageWhereInput
+  AND: [ChatWhereInput!]
+  OR: [ChatWhereInput!]
+  NOT: [ChatWhereInput!]
+}
+
+input ChatWhereUniqueInput {
+  id: ID
+}
+
 type Comment {
   id: ID!
   text: String!
-  user: User!
-  post: Post!
+  user: User
+  post: Post
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CommentConnection {
@@ -49,9 +218,10 @@ type CommentConnection {
 }
 
 input CommentCreateInput {
+  id: ID
   text: String!
-  user: UserCreateOneWithoutCommentsInput!
-  post: PostCreateOneWithoutCommentsInput!
+  user: UserCreateOneWithoutCommentsInput
+  post: PostCreateOneWithoutCommentsInput
 }
 
 input CommentCreateManyWithoutPostInput {
@@ -65,13 +235,15 @@ input CommentCreateManyWithoutUserInput {
 }
 
 input CommentCreateWithoutPostInput {
+  id: ID
   text: String!
-  user: UserCreateOneWithoutCommentsInput!
+  user: UserCreateOneWithoutCommentsInput
 }
 
 input CommentCreateWithoutUserInput {
+  id: ID
   text: String!
-  post: PostCreateOneWithoutCommentsInput!
+  post: PostCreateOneWithoutCommentsInput
 }
 
 type CommentEdge {
@@ -84,11 +256,17 @@ enum CommentOrderByInput {
   id_DESC
   text_ASC
   text_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type CommentPreviousValues {
   id: ID!
   text: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input CommentScalarWhereInput {
@@ -120,6 +298,22 @@ input CommentScalarWhereInput {
   text_not_starts_with: String
   text_ends_with: String
   text_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CommentScalarWhereInput!]
   OR: [CommentScalarWhereInput!]
   NOT: [CommentScalarWhereInput!]
@@ -145,8 +339,8 @@ input CommentSubscriptionWhereInput {
 
 input CommentUpdateInput {
   text: String
-  user: UserUpdateOneRequiredWithoutCommentsInput
-  post: PostUpdateOneRequiredWithoutCommentsInput
+  user: UserUpdateOneWithoutCommentsInput
+  post: PostUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateManyDataInput {
@@ -188,12 +382,12 @@ input CommentUpdateManyWithWhereNestedInput {
 
 input CommentUpdateWithoutPostDataInput {
   text: String
-  user: UserUpdateOneRequiredWithoutCommentsInput
+  user: UserUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateWithoutUserDataInput {
   text: String
-  post: PostUpdateOneRequiredWithoutCommentsInput
+  post: PostUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateWithWhereUniqueWithoutPostInput {
@@ -249,6 +443,22 @@ input CommentWhereInput {
   text_not_ends_with: String
   user: UserWhereInput
   post: PostWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [CommentWhereInput!]
   OR: [CommentWhereInput!]
   NOT: [CommentWhereInput!]
@@ -258,10 +468,14 @@ input CommentWhereUniqueInput {
   id: ID
 }
 
+scalar DateTime
+
 type File {
   id: ID!
   url: String!
-  post: Post!
+  post: Post
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type FileConnection {
@@ -271,8 +485,9 @@ type FileConnection {
 }
 
 input FileCreateInput {
+  id: ID
   url: String!
-  post: PostCreateOneWithoutFilesInput!
+  post: PostCreateOneWithoutFilesInput
 }
 
 input FileCreateManyWithoutPostInput {
@@ -281,6 +496,7 @@ input FileCreateManyWithoutPostInput {
 }
 
 input FileCreateWithoutPostInput {
+  id: ID
   url: String!
 }
 
@@ -294,11 +510,17 @@ enum FileOrderByInput {
   id_DESC
   url_ASC
   url_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type FilePreviousValues {
   id: ID!
   url: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input FileScalarWhereInput {
@@ -330,6 +552,22 @@ input FileScalarWhereInput {
   url_not_starts_with: String
   url_ends_with: String
   url_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [FileScalarWhereInput!]
   OR: [FileScalarWhereInput!]
   NOT: [FileScalarWhereInput!]
@@ -355,7 +593,7 @@ input FileSubscriptionWhereInput {
 
 input FileUpdateInput {
   url: String
-  post: PostUpdateOneRequiredWithoutFilesInput
+  post: PostUpdateOneWithoutFilesInput
 }
 
 input FileUpdateManyDataInput {
@@ -428,6 +666,22 @@ input FileWhereInput {
   url_ends_with: String
   url_not_ends_with: String
   post: PostWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [FileWhereInput!]
   OR: [FileWhereInput!]
   NOT: [FileWhereInput!]
@@ -439,8 +693,10 @@ input FileWhereUniqueInput {
 
 type Like {
   id: ID!
-  user: User!
-  post: Post!
+  user: User
+  post: Post
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type LikeConnection {
@@ -450,8 +706,9 @@ type LikeConnection {
 }
 
 input LikeCreateInput {
-  user: UserCreateOneWithoutLikesInput!
-  post: PostCreateOneWithoutLikesInput!
+  id: ID
+  user: UserCreateOneWithoutLikesInput
+  post: PostCreateOneWithoutLikesInput
 }
 
 input LikeCreateManyWithoutPostInput {
@@ -465,11 +722,13 @@ input LikeCreateManyWithoutUserInput {
 }
 
 input LikeCreateWithoutPostInput {
-  user: UserCreateOneWithoutLikesInput!
+  id: ID
+  user: UserCreateOneWithoutLikesInput
 }
 
 input LikeCreateWithoutUserInput {
-  post: PostCreateOneWithoutLikesInput!
+  id: ID
+  post: PostCreateOneWithoutLikesInput
 }
 
 type LikeEdge {
@@ -480,10 +739,16 @@ type LikeEdge {
 enum LikeOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type LikePreviousValues {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input LikeScalarWhereInput {
@@ -501,6 +766,22 @@ input LikeScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [LikeScalarWhereInput!]
   OR: [LikeScalarWhereInput!]
   NOT: [LikeScalarWhereInput!]
@@ -525,8 +806,8 @@ input LikeSubscriptionWhereInput {
 }
 
 input LikeUpdateInput {
-  user: UserUpdateOneRequiredWithoutLikesInput
-  post: PostUpdateOneRequiredWithoutLikesInput
+  user: UserUpdateOneWithoutLikesInput
+  post: PostUpdateOneWithoutLikesInput
 }
 
 input LikeUpdateManyWithoutPostInput {
@@ -552,11 +833,11 @@ input LikeUpdateManyWithoutUserInput {
 }
 
 input LikeUpdateWithoutPostDataInput {
-  user: UserUpdateOneRequiredWithoutLikesInput
+  user: UserUpdateOneWithoutLikesInput
 }
 
 input LikeUpdateWithoutUserDataInput {
-  post: PostUpdateOneRequiredWithoutLikesInput
+  post: PostUpdateOneWithoutLikesInput
 }
 
 input LikeUpdateWithWhereUniqueWithoutPostInput {
@@ -598,6 +879,22 @@ input LikeWhereInput {
   id_not_ends_with: ID
   user: UserWhereInput
   post: PostWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [LikeWhereInput!]
   OR: [LikeWhereInput!]
   NOT: [LikeWhereInput!]
@@ -614,7 +911,7 @@ type Message {
   text: String!
   from: User!
   to: User!
-  room: Room!
+  chat: Chat!
 }
 
 type MessageConnection {
@@ -624,18 +921,20 @@ type MessageConnection {
 }
 
 input MessageCreateInput {
+  id: ID
   text: String!
   from: UserCreateOneInput!
   to: UserCreateOneInput!
-  room: RoomCreateOneWithoutMessagesInput!
+  chat: ChatCreateOneWithoutMessagesInput!
 }
 
-input MessageCreateManyWithoutRoomInput {
-  create: [MessageCreateWithoutRoomInput!]
+input MessageCreateManyWithoutChatInput {
+  create: [MessageCreateWithoutChatInput!]
   connect: [MessageWhereUniqueInput!]
 }
 
-input MessageCreateWithoutRoomInput {
+input MessageCreateWithoutChatInput {
+  id: ID
   text: String!
   from: UserCreateOneInput!
   to: UserCreateOneInput!
@@ -714,7 +1013,7 @@ input MessageUpdateInput {
   text: String
   from: UserUpdateOneRequiredInput
   to: UserUpdateOneRequiredInput
-  room: RoomUpdateOneRequiredWithoutMessagesInput
+  chat: ChatUpdateOneRequiredWithoutMessagesInput
 }
 
 input MessageUpdateManyDataInput {
@@ -725,14 +1024,14 @@ input MessageUpdateManyMutationInput {
   text: String
 }
 
-input MessageUpdateManyWithoutRoomInput {
-  create: [MessageCreateWithoutRoomInput!]
+input MessageUpdateManyWithoutChatInput {
+  create: [MessageCreateWithoutChatInput!]
   delete: [MessageWhereUniqueInput!]
   connect: [MessageWhereUniqueInput!]
   set: [MessageWhereUniqueInput!]
   disconnect: [MessageWhereUniqueInput!]
-  update: [MessageUpdateWithWhereUniqueWithoutRoomInput!]
-  upsert: [MessageUpsertWithWhereUniqueWithoutRoomInput!]
+  update: [MessageUpdateWithWhereUniqueWithoutChatInput!]
+  upsert: [MessageUpsertWithWhereUniqueWithoutChatInput!]
   deleteMany: [MessageScalarWhereInput!]
   updateMany: [MessageUpdateManyWithWhereNestedInput!]
 }
@@ -742,21 +1041,21 @@ input MessageUpdateManyWithWhereNestedInput {
   data: MessageUpdateManyDataInput!
 }
 
-input MessageUpdateWithoutRoomDataInput {
+input MessageUpdateWithoutChatDataInput {
   text: String
   from: UserUpdateOneRequiredInput
   to: UserUpdateOneRequiredInput
 }
 
-input MessageUpdateWithWhereUniqueWithoutRoomInput {
+input MessageUpdateWithWhereUniqueWithoutChatInput {
   where: MessageWhereUniqueInput!
-  data: MessageUpdateWithoutRoomDataInput!
+  data: MessageUpdateWithoutChatDataInput!
 }
 
-input MessageUpsertWithWhereUniqueWithoutRoomInput {
+input MessageUpsertWithWhereUniqueWithoutChatInput {
   where: MessageWhereUniqueInput!
-  update: MessageUpdateWithoutRoomDataInput!
-  create: MessageCreateWithoutRoomInput!
+  update: MessageUpdateWithoutChatDataInput!
+  create: MessageCreateWithoutChatInput!
 }
 
 input MessageWhereInput {
@@ -790,7 +1089,7 @@ input MessageWhereInput {
   text_not_ends_with: String
   from: UserWhereInput
   to: UserWhereInput
-  room: RoomWhereInput
+  chat: ChatWhereInput
   AND: [MessageWhereInput!]
   OR: [MessageWhereInput!]
   NOT: [MessageWhereInput!]
@@ -801,6 +1100,11 @@ input MessageWhereUniqueInput {
 }
 
 type Mutation {
+  createChat(data: ChatCreateInput!): Chat!
+  updateChat(data: ChatUpdateInput!, where: ChatWhereUniqueInput!): Chat
+  upsertChat(where: ChatWhereUniqueInput!, create: ChatCreateInput!, update: ChatUpdateInput!): Chat!
+  deleteChat(where: ChatWhereUniqueInput!): Chat
+  deleteManyChats(where: ChatWhereInput): BatchPayload!
   createComment(data: CommentCreateInput!): Comment!
   updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
   updateManyComments(data: CommentUpdateManyMutationInput!, where: CommentWhereInput): BatchPayload!
@@ -830,11 +1134,6 @@ type Mutation {
   upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
   deletePost(where: PostWhereUniqueInput!): Post
   deleteManyPosts(where: PostWhereInput): BatchPayload!
-  createRoom(data: RoomCreateInput!): Room!
-  updateRoom(data: RoomUpdateInput!, where: RoomWhereUniqueInput!): Room
-  upsertRoom(where: RoomWhereUniqueInput!, create: RoomCreateInput!, update: RoomUpdateInput!): Room!
-  deleteRoom(where: RoomWhereUniqueInput!): Room
-  deleteManyRooms(where: RoomWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -864,10 +1163,12 @@ type Post {
   id: ID!
   location: String
   caption: String!
-  user: User!
+  creator: User
   files(where: FileWhereInput, orderBy: FileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [File!]
   likes(where: LikeWhereInput, orderBy: LikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Like!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type PostConnection {
@@ -877,16 +1178,17 @@ type PostConnection {
 }
 
 input PostCreateInput {
+  id: ID
   location: String
   caption: String!
-  user: UserCreateOneWithoutPostsInput!
+  creator: UserCreateOneWithoutPostsInput
   files: FileCreateManyWithoutPostInput
   likes: LikeCreateManyWithoutPostInput
   comments: CommentCreateManyWithoutPostInput
 }
 
-input PostCreateManyWithoutUserInput {
-  create: [PostCreateWithoutUserInput!]
+input PostCreateManyWithoutCreatorInput {
+  create: [PostCreateWithoutCreatorInput!]
   connect: [PostWhereUniqueInput!]
 }
 
@@ -906,34 +1208,38 @@ input PostCreateOneWithoutLikesInput {
 }
 
 input PostCreateWithoutCommentsInput {
+  id: ID
   location: String
   caption: String!
-  user: UserCreateOneWithoutPostsInput!
+  creator: UserCreateOneWithoutPostsInput
   files: FileCreateManyWithoutPostInput
   likes: LikeCreateManyWithoutPostInput
 }
 
-input PostCreateWithoutFilesInput {
+input PostCreateWithoutCreatorInput {
+  id: ID
   location: String
   caption: String!
-  user: UserCreateOneWithoutPostsInput!
+  files: FileCreateManyWithoutPostInput
+  likes: LikeCreateManyWithoutPostInput
+  comments: CommentCreateManyWithoutPostInput
+}
+
+input PostCreateWithoutFilesInput {
+  id: ID
+  location: String
+  caption: String!
+  creator: UserCreateOneWithoutPostsInput
   likes: LikeCreateManyWithoutPostInput
   comments: CommentCreateManyWithoutPostInput
 }
 
 input PostCreateWithoutLikesInput {
+  id: ID
   location: String
   caption: String!
-  user: UserCreateOneWithoutPostsInput!
+  creator: UserCreateOneWithoutPostsInput
   files: FileCreateManyWithoutPostInput
-  comments: CommentCreateManyWithoutPostInput
-}
-
-input PostCreateWithoutUserInput {
-  location: String
-  caption: String!
-  files: FileCreateManyWithoutPostInput
-  likes: LikeCreateManyWithoutPostInput
   comments: CommentCreateManyWithoutPostInput
 }
 
@@ -949,12 +1255,18 @@ enum PostOrderByInput {
   location_DESC
   caption_ASC
   caption_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type PostPreviousValues {
   id: ID!
   location: String
   caption: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input PostScalarWhereInput {
@@ -1000,6 +1312,22 @@ input PostScalarWhereInput {
   caption_not_starts_with: String
   caption_ends_with: String
   caption_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [PostScalarWhereInput!]
   OR: [PostScalarWhereInput!]
   NOT: [PostScalarWhereInput!]
@@ -1026,7 +1354,7 @@ input PostSubscriptionWhereInput {
 input PostUpdateInput {
   location: String
   caption: String
-  user: UserUpdateOneRequiredWithoutPostsInput
+  creator: UserUpdateOneWithoutPostsInput
   files: FileUpdateManyWithoutPostInput
   likes: LikeUpdateManyWithoutPostInput
   comments: CommentUpdateManyWithoutPostInput
@@ -1042,14 +1370,14 @@ input PostUpdateManyMutationInput {
   caption: String
 }
 
-input PostUpdateManyWithoutUserInput {
-  create: [PostCreateWithoutUserInput!]
+input PostUpdateManyWithoutCreatorInput {
+  create: [PostCreateWithoutCreatorInput!]
   delete: [PostWhereUniqueInput!]
   connect: [PostWhereUniqueInput!]
   set: [PostWhereUniqueInput!]
   disconnect: [PostWhereUniqueInput!]
-  update: [PostUpdateWithWhereUniqueWithoutUserInput!]
-  upsert: [PostUpsertWithWhereUniqueWithoutUserInput!]
+  update: [PostUpdateWithWhereUniqueWithoutCreatorInput!]
+  upsert: [PostUpsertWithWhereUniqueWithoutCreatorInput!]
   deleteMany: [PostScalarWhereInput!]
   updateMany: [PostUpdateManyWithWhereNestedInput!]
 }
@@ -1059,39 +1387,53 @@ input PostUpdateManyWithWhereNestedInput {
   data: PostUpdateManyDataInput!
 }
 
-input PostUpdateOneRequiredWithoutCommentsInput {
+input PostUpdateOneWithoutCommentsInput {
   create: PostCreateWithoutCommentsInput
   update: PostUpdateWithoutCommentsDataInput
   upsert: PostUpsertWithoutCommentsInput
+  delete: Boolean
+  disconnect: Boolean
   connect: PostWhereUniqueInput
 }
 
-input PostUpdateOneRequiredWithoutFilesInput {
+input PostUpdateOneWithoutFilesInput {
   create: PostCreateWithoutFilesInput
   update: PostUpdateWithoutFilesDataInput
   upsert: PostUpsertWithoutFilesInput
+  delete: Boolean
+  disconnect: Boolean
   connect: PostWhereUniqueInput
 }
 
-input PostUpdateOneRequiredWithoutLikesInput {
+input PostUpdateOneWithoutLikesInput {
   create: PostCreateWithoutLikesInput
   update: PostUpdateWithoutLikesDataInput
   upsert: PostUpsertWithoutLikesInput
+  delete: Boolean
+  disconnect: Boolean
   connect: PostWhereUniqueInput
 }
 
 input PostUpdateWithoutCommentsDataInput {
   location: String
   caption: String
-  user: UserUpdateOneRequiredWithoutPostsInput
+  creator: UserUpdateOneWithoutPostsInput
   files: FileUpdateManyWithoutPostInput
   likes: LikeUpdateManyWithoutPostInput
+}
+
+input PostUpdateWithoutCreatorDataInput {
+  location: String
+  caption: String
+  files: FileUpdateManyWithoutPostInput
+  likes: LikeUpdateManyWithoutPostInput
+  comments: CommentUpdateManyWithoutPostInput
 }
 
 input PostUpdateWithoutFilesDataInput {
   location: String
   caption: String
-  user: UserUpdateOneRequiredWithoutPostsInput
+  creator: UserUpdateOneWithoutPostsInput
   likes: LikeUpdateManyWithoutPostInput
   comments: CommentUpdateManyWithoutPostInput
 }
@@ -1099,22 +1441,14 @@ input PostUpdateWithoutFilesDataInput {
 input PostUpdateWithoutLikesDataInput {
   location: String
   caption: String
-  user: UserUpdateOneRequiredWithoutPostsInput
+  creator: UserUpdateOneWithoutPostsInput
   files: FileUpdateManyWithoutPostInput
   comments: CommentUpdateManyWithoutPostInput
 }
 
-input PostUpdateWithoutUserDataInput {
-  location: String
-  caption: String
-  files: FileUpdateManyWithoutPostInput
-  likes: LikeUpdateManyWithoutPostInput
-  comments: CommentUpdateManyWithoutPostInput
-}
-
-input PostUpdateWithWhereUniqueWithoutUserInput {
+input PostUpdateWithWhereUniqueWithoutCreatorInput {
   where: PostWhereUniqueInput!
-  data: PostUpdateWithoutUserDataInput!
+  data: PostUpdateWithoutCreatorDataInput!
 }
 
 input PostUpsertWithoutCommentsInput {
@@ -1132,10 +1466,10 @@ input PostUpsertWithoutLikesInput {
   create: PostCreateWithoutLikesInput!
 }
 
-input PostUpsertWithWhereUniqueWithoutUserInput {
+input PostUpsertWithWhereUniqueWithoutCreatorInput {
   where: PostWhereUniqueInput!
-  update: PostUpdateWithoutUserDataInput!
-  create: PostCreateWithoutUserInput!
+  update: PostUpdateWithoutCreatorDataInput!
+  create: PostCreateWithoutCreatorInput!
 }
 
 input PostWhereInput {
@@ -1181,7 +1515,7 @@ input PostWhereInput {
   caption_not_starts_with: String
   caption_ends_with: String
   caption_not_ends_with: String
-  user: UserWhereInput
+  creator: UserWhereInput
   files_every: FileWhereInput
   files_some: FileWhereInput
   files_none: FileWhereInput
@@ -1191,6 +1525,22 @@ input PostWhereInput {
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
   comments_none: CommentWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [PostWhereInput!]
   OR: [PostWhereInput!]
   NOT: [PostWhereInput!]
@@ -1201,6 +1551,9 @@ input PostWhereUniqueInput {
 }
 
 type Query {
+  chat(where: ChatWhereUniqueInput!): Chat
+  chats(where: ChatWhereInput, orderBy: ChatOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chat]!
+  chatsConnection(where: ChatWhereInput, orderBy: ChatOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ChatConnection!
   comment(where: CommentWhereUniqueInput!): Comment
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
   commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
@@ -1216,191 +1569,25 @@ type Query {
   post(where: PostWhereUniqueInput!): Post
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
   postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
-  room(where: RoomWhereUniqueInput!): Room
-  rooms(where: RoomWhereInput, orderBy: RoomOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Room]!
-  roomsConnection(where: RoomWhereInput, orderBy: RoomOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RoomConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   node(id: ID!): Node
 }
 
-type Room {
-  id: ID!
-  participants(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
-  messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
-}
-
-type RoomConnection {
-  pageInfo: PageInfo!
-  edges: [RoomEdge]!
-  aggregate: AggregateRoom!
-}
-
-input RoomCreateInput {
-  participants: UserCreateManyWithoutRoomsInput
-  messages: MessageCreateManyWithoutRoomInput
-}
-
-input RoomCreateManyWithoutParticipantsInput {
-  create: [RoomCreateWithoutParticipantsInput!]
-  connect: [RoomWhereUniqueInput!]
-}
-
-input RoomCreateOneWithoutMessagesInput {
-  create: RoomCreateWithoutMessagesInput
-  connect: RoomWhereUniqueInput
-}
-
-input RoomCreateWithoutMessagesInput {
-  participants: UserCreateManyWithoutRoomsInput
-}
-
-input RoomCreateWithoutParticipantsInput {
-  messages: MessageCreateManyWithoutRoomInput
-}
-
-type RoomEdge {
-  node: Room!
-  cursor: String!
-}
-
-enum RoomOrderByInput {
-  id_ASC
-  id_DESC
-}
-
-type RoomPreviousValues {
-  id: ID!
-}
-
-input RoomScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  AND: [RoomScalarWhereInput!]
-  OR: [RoomScalarWhereInput!]
-  NOT: [RoomScalarWhereInput!]
-}
-
-type RoomSubscriptionPayload {
-  mutation: MutationType!
-  node: Room
-  updatedFields: [String!]
-  previousValues: RoomPreviousValues
-}
-
-input RoomSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: RoomWhereInput
-  AND: [RoomSubscriptionWhereInput!]
-  OR: [RoomSubscriptionWhereInput!]
-  NOT: [RoomSubscriptionWhereInput!]
-}
-
-input RoomUpdateInput {
-  participants: UserUpdateManyWithoutRoomsInput
-  messages: MessageUpdateManyWithoutRoomInput
-}
-
-input RoomUpdateManyWithoutParticipantsInput {
-  create: [RoomCreateWithoutParticipantsInput!]
-  delete: [RoomWhereUniqueInput!]
-  connect: [RoomWhereUniqueInput!]
-  set: [RoomWhereUniqueInput!]
-  disconnect: [RoomWhereUniqueInput!]
-  update: [RoomUpdateWithWhereUniqueWithoutParticipantsInput!]
-  upsert: [RoomUpsertWithWhereUniqueWithoutParticipantsInput!]
-  deleteMany: [RoomScalarWhereInput!]
-}
-
-input RoomUpdateOneRequiredWithoutMessagesInput {
-  create: RoomCreateWithoutMessagesInput
-  update: RoomUpdateWithoutMessagesDataInput
-  upsert: RoomUpsertWithoutMessagesInput
-  connect: RoomWhereUniqueInput
-}
-
-input RoomUpdateWithoutMessagesDataInput {
-  participants: UserUpdateManyWithoutRoomsInput
-}
-
-input RoomUpdateWithoutParticipantsDataInput {
-  messages: MessageUpdateManyWithoutRoomInput
-}
-
-input RoomUpdateWithWhereUniqueWithoutParticipantsInput {
-  where: RoomWhereUniqueInput!
-  data: RoomUpdateWithoutParticipantsDataInput!
-}
-
-input RoomUpsertWithoutMessagesInput {
-  update: RoomUpdateWithoutMessagesDataInput!
-  create: RoomCreateWithoutMessagesInput!
-}
-
-input RoomUpsertWithWhereUniqueWithoutParticipantsInput {
-  where: RoomWhereUniqueInput!
-  update: RoomUpdateWithoutParticipantsDataInput!
-  create: RoomCreateWithoutParticipantsInput!
-}
-
-input RoomWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  participants_every: UserWhereInput
-  participants_some: UserWhereInput
-  participants_none: UserWhereInput
-  messages_every: MessageWhereInput
-  messages_some: MessageWhereInput
-  messages_none: MessageWhereInput
-  AND: [RoomWhereInput!]
-  OR: [RoomWhereInput!]
-  NOT: [RoomWhereInput!]
-}
-
-input RoomWhereUniqueInput {
-  id: ID
-}
-
 type Subscription {
+  chat(where: ChatSubscriptionWhereInput): ChatSubscriptionPayload
   comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
   file(where: FileSubscriptionWhereInput): FileSubscriptionPayload
   like(where: LikeSubscriptionWhereInput): LikeSubscriptionPayload
   message(where: MessageSubscriptionWhereInput): MessageSubscriptionPayload
   post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
-  room(where: RoomSubscriptionWhereInput): RoomSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type User {
   id: ID!
+  avatar: String
   username: String!
   email: String!
   firstName: String
@@ -1411,8 +1598,8 @@ type User {
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   likes(where: LikeWhereInput, orderBy: LikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Like!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
-  rooms(where: RoomWhereInput, orderBy: RoomOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Room!]
-  loginSecret: String!
+  chat(where: ChatWhereInput, orderBy: ChatOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chat!]
+  loginSecret: String
 }
 
 type UserConnection {
@@ -1422,6 +1609,8 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  id: ID
+  avatar: String
   username: String!
   email: String!
   firstName: String
@@ -1429,11 +1618,16 @@ input UserCreateInput {
   bio: String
   following: UserCreateManyWithoutFollowersInput
   followers: UserCreateManyWithoutFollowingInput
-  posts: PostCreateManyWithoutUserInput
+  posts: PostCreateManyWithoutCreatorInput
   likes: LikeCreateManyWithoutUserInput
   comments: CommentCreateManyWithoutUserInput
-  rooms: RoomCreateManyWithoutParticipantsInput
-  loginSecret: String!
+  chat: ChatCreateManyWithoutParticipantsInput
+  loginSecret: String
+}
+
+input UserCreateManyWithoutChatInput {
+  create: [UserCreateWithoutChatInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input UserCreateManyWithoutFollowersInput {
@@ -1443,11 +1637,6 @@ input UserCreateManyWithoutFollowersInput {
 
 input UserCreateManyWithoutFollowingInput {
   create: [UserCreateWithoutFollowingInput!]
-  connect: [UserWhereUniqueInput!]
-}
-
-input UserCreateManyWithoutRoomsInput {
-  create: [UserCreateWithoutRoomsInput!]
   connect: [UserWhereUniqueInput!]
 }
 
@@ -1471,7 +1660,9 @@ input UserCreateOneWithoutPostsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutCommentsInput {
+input UserCreateWithoutChatInput {
+  id: ID
+  avatar: String
   username: String!
   email: String!
   firstName: String
@@ -1479,41 +1670,63 @@ input UserCreateWithoutCommentsInput {
   bio: String
   following: UserCreateManyWithoutFollowersInput
   followers: UserCreateManyWithoutFollowingInput
-  posts: PostCreateManyWithoutUserInput
+  posts: PostCreateManyWithoutCreatorInput
   likes: LikeCreateManyWithoutUserInput
-  rooms: RoomCreateManyWithoutParticipantsInput
-  loginSecret: String!
+  comments: CommentCreateManyWithoutUserInput
+  loginSecret: String
+}
+
+input UserCreateWithoutCommentsInput {
+  id: ID
+  avatar: String
+  username: String!
+  email: String!
+  firstName: String
+  lastName: String
+  bio: String
+  following: UserCreateManyWithoutFollowersInput
+  followers: UserCreateManyWithoutFollowingInput
+  posts: PostCreateManyWithoutCreatorInput
+  likes: LikeCreateManyWithoutUserInput
+  chat: ChatCreateManyWithoutParticipantsInput
+  loginSecret: String
 }
 
 input UserCreateWithoutFollowersInput {
+  id: ID
+  avatar: String
   username: String!
   email: String!
   firstName: String
   lastName: String
   bio: String
   following: UserCreateManyWithoutFollowersInput
-  posts: PostCreateManyWithoutUserInput
+  posts: PostCreateManyWithoutCreatorInput
   likes: LikeCreateManyWithoutUserInput
   comments: CommentCreateManyWithoutUserInput
-  rooms: RoomCreateManyWithoutParticipantsInput
-  loginSecret: String!
+  chat: ChatCreateManyWithoutParticipantsInput
+  loginSecret: String
 }
 
 input UserCreateWithoutFollowingInput {
+  id: ID
+  avatar: String
   username: String!
   email: String!
   firstName: String
   lastName: String
   bio: String
   followers: UserCreateManyWithoutFollowingInput
-  posts: PostCreateManyWithoutUserInput
+  posts: PostCreateManyWithoutCreatorInput
   likes: LikeCreateManyWithoutUserInput
   comments: CommentCreateManyWithoutUserInput
-  rooms: RoomCreateManyWithoutParticipantsInput
-  loginSecret: String!
+  chat: ChatCreateManyWithoutParticipantsInput
+  loginSecret: String
 }
 
 input UserCreateWithoutLikesInput {
+  id: ID
+  avatar: String
   username: String!
   email: String!
   firstName: String
@@ -1521,13 +1734,15 @@ input UserCreateWithoutLikesInput {
   bio: String
   following: UserCreateManyWithoutFollowersInput
   followers: UserCreateManyWithoutFollowingInput
-  posts: PostCreateManyWithoutUserInput
+  posts: PostCreateManyWithoutCreatorInput
   comments: CommentCreateManyWithoutUserInput
-  rooms: RoomCreateManyWithoutParticipantsInput
-  loginSecret: String!
+  chat: ChatCreateManyWithoutParticipantsInput
+  loginSecret: String
 }
 
 input UserCreateWithoutPostsInput {
+  id: ID
+  avatar: String
   username: String!
   email: String!
   firstName: String
@@ -1537,22 +1752,8 @@ input UserCreateWithoutPostsInput {
   followers: UserCreateManyWithoutFollowingInput
   likes: LikeCreateManyWithoutUserInput
   comments: CommentCreateManyWithoutUserInput
-  rooms: RoomCreateManyWithoutParticipantsInput
-  loginSecret: String!
-}
-
-input UserCreateWithoutRoomsInput {
-  username: String!
-  email: String!
-  firstName: String
-  lastName: String
-  bio: String
-  following: UserCreateManyWithoutFollowersInput
-  followers: UserCreateManyWithoutFollowingInput
-  posts: PostCreateManyWithoutUserInput
-  likes: LikeCreateManyWithoutUserInput
-  comments: CommentCreateManyWithoutUserInput
-  loginSecret: String!
+  chat: ChatCreateManyWithoutParticipantsInput
+  loginSecret: String
 }
 
 type UserEdge {
@@ -1563,6 +1764,8 @@ type UserEdge {
 enum UserOrderByInput {
   id_ASC
   id_DESC
+  avatar_ASC
+  avatar_DESC
   username_ASC
   username_DESC
   email_ASC
@@ -1579,12 +1782,13 @@ enum UserOrderByInput {
 
 type UserPreviousValues {
   id: ID!
+  avatar: String
   username: String!
   email: String!
   firstName: String
   lastName: String
   bio: String
-  loginSecret: String!
+  loginSecret: String
 }
 
 input UserScalarWhereInput {
@@ -1602,6 +1806,20 @@ input UserScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  avatar: String
+  avatar_not: String
+  avatar_in: [String!]
+  avatar_not_in: [String!]
+  avatar_lt: String
+  avatar_lte: String
+  avatar_gt: String
+  avatar_gte: String
+  avatar_contains: String
+  avatar_not_contains: String
+  avatar_starts_with: String
+  avatar_not_starts_with: String
+  avatar_ends_with: String
+  avatar_not_ends_with: String
   username: String
   username_not: String
   username_in: [String!]
@@ -1710,6 +1928,7 @@ input UserSubscriptionWhereInput {
 }
 
 input UserUpdateDataInput {
+  avatar: String
   username: String
   email: String
   firstName: String
@@ -1717,14 +1936,15 @@ input UserUpdateDataInput {
   bio: String
   following: UserUpdateManyWithoutFollowersInput
   followers: UserUpdateManyWithoutFollowingInput
-  posts: PostUpdateManyWithoutUserInput
+  posts: PostUpdateManyWithoutCreatorInput
   likes: LikeUpdateManyWithoutUserInput
   comments: CommentUpdateManyWithoutUserInput
-  rooms: RoomUpdateManyWithoutParticipantsInput
+  chat: ChatUpdateManyWithoutParticipantsInput
   loginSecret: String
 }
 
 input UserUpdateInput {
+  avatar: String
   username: String
   email: String
   firstName: String
@@ -1732,14 +1952,15 @@ input UserUpdateInput {
   bio: String
   following: UserUpdateManyWithoutFollowersInput
   followers: UserUpdateManyWithoutFollowingInput
-  posts: PostUpdateManyWithoutUserInput
+  posts: PostUpdateManyWithoutCreatorInput
   likes: LikeUpdateManyWithoutUserInput
   comments: CommentUpdateManyWithoutUserInput
-  rooms: RoomUpdateManyWithoutParticipantsInput
+  chat: ChatUpdateManyWithoutParticipantsInput
   loginSecret: String
 }
 
 input UserUpdateManyDataInput {
+  avatar: String
   username: String
   email: String
   firstName: String
@@ -1749,12 +1970,25 @@ input UserUpdateManyDataInput {
 }
 
 input UserUpdateManyMutationInput {
+  avatar: String
   username: String
   email: String
   firstName: String
   lastName: String
   bio: String
   loginSecret: String
+}
+
+input UserUpdateManyWithoutChatInput {
+  create: [UserCreateWithoutChatInput!]
+  delete: [UserWhereUniqueInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutChatInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutChatInput!]
+  deleteMany: [UserScalarWhereInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
 }
 
 input UserUpdateManyWithoutFollowersInput {
@@ -1781,18 +2015,6 @@ input UserUpdateManyWithoutFollowingInput {
   updateMany: [UserUpdateManyWithWhereNestedInput!]
 }
 
-input UserUpdateManyWithoutRoomsInput {
-  create: [UserCreateWithoutRoomsInput!]
-  delete: [UserWhereUniqueInput!]
-  connect: [UserWhereUniqueInput!]
-  set: [UserWhereUniqueInput!]
-  disconnect: [UserWhereUniqueInput!]
-  update: [UserUpdateWithWhereUniqueWithoutRoomsInput!]
-  upsert: [UserUpsertWithWhereUniqueWithoutRoomsInput!]
-  deleteMany: [UserScalarWhereInput!]
-  updateMany: [UserUpdateManyWithWhereNestedInput!]
-}
-
 input UserUpdateManyWithWhereNestedInput {
   where: UserScalarWhereInput!
   data: UserUpdateManyDataInput!
@@ -1805,28 +2027,35 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateOneRequiredWithoutCommentsInput {
+input UserUpdateOneWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput
   update: UserUpdateWithoutCommentsDataInput
   upsert: UserUpsertWithoutCommentsInput
+  delete: Boolean
+  disconnect: Boolean
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateOneRequiredWithoutLikesInput {
+input UserUpdateOneWithoutLikesInput {
   create: UserCreateWithoutLikesInput
   update: UserUpdateWithoutLikesDataInput
   upsert: UserUpsertWithoutLikesInput
+  delete: Boolean
+  disconnect: Boolean
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateOneRequiredWithoutPostsInput {
+input UserUpdateOneWithoutPostsInput {
   create: UserCreateWithoutPostsInput
   update: UserUpdateWithoutPostsDataInput
   upsert: UserUpsertWithoutPostsInput
+  delete: Boolean
+  disconnect: Boolean
   connect: UserWhereUniqueInput
 }
 
-input UserUpdateWithoutCommentsDataInput {
+input UserUpdateWithoutChatDataInput {
+  avatar: String
   username: String
   email: String
   firstName: String
@@ -1834,41 +2063,59 @@ input UserUpdateWithoutCommentsDataInput {
   bio: String
   following: UserUpdateManyWithoutFollowersInput
   followers: UserUpdateManyWithoutFollowingInput
-  posts: PostUpdateManyWithoutUserInput
+  posts: PostUpdateManyWithoutCreatorInput
   likes: LikeUpdateManyWithoutUserInput
-  rooms: RoomUpdateManyWithoutParticipantsInput
+  comments: CommentUpdateManyWithoutUserInput
+  loginSecret: String
+}
+
+input UserUpdateWithoutCommentsDataInput {
+  avatar: String
+  username: String
+  email: String
+  firstName: String
+  lastName: String
+  bio: String
+  following: UserUpdateManyWithoutFollowersInput
+  followers: UserUpdateManyWithoutFollowingInput
+  posts: PostUpdateManyWithoutCreatorInput
+  likes: LikeUpdateManyWithoutUserInput
+  chat: ChatUpdateManyWithoutParticipantsInput
   loginSecret: String
 }
 
 input UserUpdateWithoutFollowersDataInput {
+  avatar: String
   username: String
   email: String
   firstName: String
   lastName: String
   bio: String
   following: UserUpdateManyWithoutFollowersInput
-  posts: PostUpdateManyWithoutUserInput
+  posts: PostUpdateManyWithoutCreatorInput
   likes: LikeUpdateManyWithoutUserInput
   comments: CommentUpdateManyWithoutUserInput
-  rooms: RoomUpdateManyWithoutParticipantsInput
+  chat: ChatUpdateManyWithoutParticipantsInput
   loginSecret: String
 }
 
 input UserUpdateWithoutFollowingDataInput {
+  avatar: String
   username: String
   email: String
   firstName: String
   lastName: String
   bio: String
   followers: UserUpdateManyWithoutFollowingInput
-  posts: PostUpdateManyWithoutUserInput
+  posts: PostUpdateManyWithoutCreatorInput
   likes: LikeUpdateManyWithoutUserInput
   comments: CommentUpdateManyWithoutUserInput
-  rooms: RoomUpdateManyWithoutParticipantsInput
+  chat: ChatUpdateManyWithoutParticipantsInput
   loginSecret: String
 }
 
 input UserUpdateWithoutLikesDataInput {
+  avatar: String
   username: String
   email: String
   firstName: String
@@ -1876,13 +2123,14 @@ input UserUpdateWithoutLikesDataInput {
   bio: String
   following: UserUpdateManyWithoutFollowersInput
   followers: UserUpdateManyWithoutFollowingInput
-  posts: PostUpdateManyWithoutUserInput
+  posts: PostUpdateManyWithoutCreatorInput
   comments: CommentUpdateManyWithoutUserInput
-  rooms: RoomUpdateManyWithoutParticipantsInput
+  chat: ChatUpdateManyWithoutParticipantsInput
   loginSecret: String
 }
 
 input UserUpdateWithoutPostsDataInput {
+  avatar: String
   username: String
   email: String
   firstName: String
@@ -1892,22 +2140,13 @@ input UserUpdateWithoutPostsDataInput {
   followers: UserUpdateManyWithoutFollowingInput
   likes: LikeUpdateManyWithoutUserInput
   comments: CommentUpdateManyWithoutUserInput
-  rooms: RoomUpdateManyWithoutParticipantsInput
+  chat: ChatUpdateManyWithoutParticipantsInput
   loginSecret: String
 }
 
-input UserUpdateWithoutRoomsDataInput {
-  username: String
-  email: String
-  firstName: String
-  lastName: String
-  bio: String
-  following: UserUpdateManyWithoutFollowersInput
-  followers: UserUpdateManyWithoutFollowingInput
-  posts: PostUpdateManyWithoutUserInput
-  likes: LikeUpdateManyWithoutUserInput
-  comments: CommentUpdateManyWithoutUserInput
-  loginSecret: String
+input UserUpdateWithWhereUniqueWithoutChatInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutChatDataInput!
 }
 
 input UserUpdateWithWhereUniqueWithoutFollowersInput {
@@ -1918,11 +2157,6 @@ input UserUpdateWithWhereUniqueWithoutFollowersInput {
 input UserUpdateWithWhereUniqueWithoutFollowingInput {
   where: UserWhereUniqueInput!
   data: UserUpdateWithoutFollowingDataInput!
-}
-
-input UserUpdateWithWhereUniqueWithoutRoomsInput {
-  where: UserWhereUniqueInput!
-  data: UserUpdateWithoutRoomsDataInput!
 }
 
 input UserUpsertNestedInput {
@@ -1945,6 +2179,12 @@ input UserUpsertWithoutPostsInput {
   create: UserCreateWithoutPostsInput!
 }
 
+input UserUpsertWithWhereUniqueWithoutChatInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutChatDataInput!
+  create: UserCreateWithoutChatInput!
+}
+
 input UserUpsertWithWhereUniqueWithoutFollowersInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutFollowersDataInput!
@@ -1955,12 +2195,6 @@ input UserUpsertWithWhereUniqueWithoutFollowingInput {
   where: UserWhereUniqueInput!
   update: UserUpdateWithoutFollowingDataInput!
   create: UserCreateWithoutFollowingInput!
-}
-
-input UserUpsertWithWhereUniqueWithoutRoomsInput {
-  where: UserWhereUniqueInput!
-  update: UserUpdateWithoutRoomsDataInput!
-  create: UserCreateWithoutRoomsInput!
 }
 
 input UserWhereInput {
@@ -1978,6 +2212,20 @@ input UserWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  avatar: String
+  avatar_not: String
+  avatar_in: [String!]
+  avatar_not_in: [String!]
+  avatar_lt: String
+  avatar_lte: String
+  avatar_gt: String
+  avatar_gte: String
+  avatar_contains: String
+  avatar_not_contains: String
+  avatar_starts_with: String
+  avatar_not_starts_with: String
+  avatar_ends_with: String
+  avatar_not_ends_with: String
   username: String
   username_not: String
   username_in: [String!]
@@ -2063,9 +2311,9 @@ input UserWhereInput {
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
   comments_none: CommentWhereInput
-  rooms_every: RoomWhereInput
-  rooms_some: RoomWhereInput
-  rooms_none: RoomWhereInput
+  chat_every: ChatWhereInput
+  chat_some: ChatWhereInput
+  chat_none: ChatWhereInput
   loginSecret: String
   loginSecret_not: String
   loginSecret_in: [String!]
