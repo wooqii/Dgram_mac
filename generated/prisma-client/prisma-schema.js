@@ -39,6 +39,8 @@ type Chat {
   id: ID!
   participants(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   messages(where: MessageWhereInput, orderBy: MessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Message!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ChatConnection {
@@ -81,10 +83,16 @@ type ChatEdge {
 enum ChatOrderByInput {
   id_ASC
   id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type ChatPreviousValues {
   id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input ChatScalarWhereInput {
@@ -102,6 +110,22 @@ input ChatScalarWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [ChatScalarWhereInput!]
   OR: [ChatScalarWhereInput!]
   NOT: [ChatScalarWhereInput!]
@@ -193,6 +217,22 @@ input ChatWhereInput {
   messages_every: MessageWhereInput
   messages_some: MessageWhereInput
   messages_none: MessageWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [ChatWhereInput!]
   OR: [ChatWhereInput!]
   NOT: [ChatWhereInput!]
@@ -912,6 +952,8 @@ type Message {
   from: User!
   to: User!
   chat: Chat!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type MessageConnection {
@@ -950,11 +992,17 @@ enum MessageOrderByInput {
   id_DESC
   text_ASC
   text_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type MessagePreviousValues {
   id: ID!
   text: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input MessageScalarWhereInput {
@@ -986,6 +1034,22 @@ input MessageScalarWhereInput {
   text_not_starts_with: String
   text_ends_with: String
   text_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [MessageScalarWhereInput!]
   OR: [MessageScalarWhereInput!]
   NOT: [MessageScalarWhereInput!]
@@ -1090,6 +1154,22 @@ input MessageWhereInput {
   from: UserWhereInput
   to: UserWhereInput
   chat: ChatWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [MessageWhereInput!]
   OR: [MessageWhereInput!]
   NOT: [MessageWhereInput!]
@@ -1163,7 +1243,7 @@ type Post {
   id: ID!
   location: String
   caption: String!
-  creator: User
+  creator: User!
   files(where: FileWhereInput, orderBy: FileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [File!]
   likes(where: LikeWhereInput, orderBy: LikeOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Like!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
@@ -1181,7 +1261,7 @@ input PostCreateInput {
   id: ID
   location: String
   caption: String!
-  creator: UserCreateOneWithoutPostsInput
+  creator: UserCreateOneWithoutPostsInput!
   files: FileCreateManyWithoutPostInput
   likes: LikeCreateManyWithoutPostInput
   comments: CommentCreateManyWithoutPostInput
@@ -1211,7 +1291,7 @@ input PostCreateWithoutCommentsInput {
   id: ID
   location: String
   caption: String!
-  creator: UserCreateOneWithoutPostsInput
+  creator: UserCreateOneWithoutPostsInput!
   files: FileCreateManyWithoutPostInput
   likes: LikeCreateManyWithoutPostInput
 }
@@ -1229,7 +1309,7 @@ input PostCreateWithoutFilesInput {
   id: ID
   location: String
   caption: String!
-  creator: UserCreateOneWithoutPostsInput
+  creator: UserCreateOneWithoutPostsInput!
   likes: LikeCreateManyWithoutPostInput
   comments: CommentCreateManyWithoutPostInput
 }
@@ -1238,7 +1318,7 @@ input PostCreateWithoutLikesInput {
   id: ID
   location: String
   caption: String!
-  creator: UserCreateOneWithoutPostsInput
+  creator: UserCreateOneWithoutPostsInput!
   files: FileCreateManyWithoutPostInput
   comments: CommentCreateManyWithoutPostInput
 }
@@ -1354,7 +1434,7 @@ input PostSubscriptionWhereInput {
 input PostUpdateInput {
   location: String
   caption: String
-  creator: UserUpdateOneWithoutPostsInput
+  creator: UserUpdateOneRequiredWithoutPostsInput
   files: FileUpdateManyWithoutPostInput
   likes: LikeUpdateManyWithoutPostInput
   comments: CommentUpdateManyWithoutPostInput
@@ -1417,7 +1497,7 @@ input PostUpdateOneWithoutLikesInput {
 input PostUpdateWithoutCommentsDataInput {
   location: String
   caption: String
-  creator: UserUpdateOneWithoutPostsInput
+  creator: UserUpdateOneRequiredWithoutPostsInput
   files: FileUpdateManyWithoutPostInput
   likes: LikeUpdateManyWithoutPostInput
 }
@@ -1433,7 +1513,7 @@ input PostUpdateWithoutCreatorDataInput {
 input PostUpdateWithoutFilesDataInput {
   location: String
   caption: String
-  creator: UserUpdateOneWithoutPostsInput
+  creator: UserUpdateOneRequiredWithoutPostsInput
   likes: LikeUpdateManyWithoutPostInput
   comments: CommentUpdateManyWithoutPostInput
 }
@@ -1441,7 +1521,7 @@ input PostUpdateWithoutFilesDataInput {
 input PostUpdateWithoutLikesDataInput {
   location: String
   caption: String
-  creator: UserUpdateOneWithoutPostsInput
+  creator: UserUpdateOneRequiredWithoutPostsInput
   files: FileUpdateManyWithoutPostInput
   comments: CommentUpdateManyWithoutPostInput
 }
@@ -1600,6 +1680,8 @@ type User {
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   chat(where: ChatWhereInput, orderBy: ChatOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Chat!]
   loginSecret: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type UserConnection {
@@ -1778,6 +1860,10 @@ enum UserOrderByInput {
   bio_DESC
   loginSecret_ASC
   loginSecret_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
 }
 
 type UserPreviousValues {
@@ -1789,6 +1875,8 @@ type UserPreviousValues {
   lastName: String
   bio: String
   loginSecret: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input UserScalarWhereInput {
@@ -1904,6 +1992,22 @@ input UserScalarWhereInput {
   loginSecret_not_starts_with: String
   loginSecret_ends_with: String
   loginSecret_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [UserScalarWhereInput!]
   OR: [UserScalarWhereInput!]
   NOT: [UserScalarWhereInput!]
@@ -2027,6 +2131,13 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutPostsInput {
+  create: UserCreateWithoutPostsInput
+  update: UserUpdateWithoutPostsDataInput
+  upsert: UserUpsertWithoutPostsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateOneWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput
   update: UserUpdateWithoutCommentsDataInput
@@ -2040,15 +2151,6 @@ input UserUpdateOneWithoutLikesInput {
   create: UserCreateWithoutLikesInput
   update: UserUpdateWithoutLikesDataInput
   upsert: UserUpsertWithoutLikesInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: UserWhereUniqueInput
-}
-
-input UserUpdateOneWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
-  update: UserUpdateWithoutPostsDataInput
-  upsert: UserUpsertWithoutPostsInput
   delete: Boolean
   disconnect: Boolean
   connect: UserWhereUniqueInput
@@ -2328,6 +2430,22 @@ input UserWhereInput {
   loginSecret_not_starts_with: String
   loginSecret_ends_with: String
   loginSecret_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

@@ -1,5 +1,4 @@
 import { prisma } from "../../../../generated/prisma-client";
-import { CHAT_FRAGMENT } from "../../../fragments";
 
 export default {
     Mutation: {
@@ -15,10 +14,10 @@ export default {
                         connect: 
                         [ { id: toId }, {id: user.id}]
                     }
-                }).$fragment(CHAT_FRAGMENT);
+                });
             }
             } else {
-                chat = await prisma.chat({ id: chatId }).$fragment(CHAT_FRAGMENT);
+                chat = await prisma.chat({ id: chatId });
             }
             if(!chat) {
                 throw Error("Chat not Found");

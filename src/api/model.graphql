@@ -10,12 +10,16 @@ type User {
   isSelf: Boolean!
   bio: String
   following: [User!]!
+  followingCount: Int!
   followers: [User!]!
+  followersCount: Int!
   posts: [Post!]!
   likes: [Like!]!
   comments: [Comment!]!
   chat: [Chat!]!
   loginSecret: String!
+  createdAt: String
+  updatedAt: String
 }
 
 type Post {
@@ -25,7 +29,7 @@ type Post {
   creator: User!
   files: [File!]!
   likes: [Like!]!
-  comments: [Comment!]!
+  comments: [Comment!]
   isLiked: Boolean!
   likeCount: Int!
   createdAt: String
@@ -52,7 +56,7 @@ type Comment {
 type File {
   id: ID!
   url: String!
-  post: Post!
+  post: Post
   createdAt: String
   updatedAt: String
 }
@@ -61,6 +65,8 @@ type Chat {
   id: ID!
   participants: [User!]!
   messages: [Message!]!
+  createdAt: String
+  updatedAt: String
 }
 
 type Message {
@@ -69,9 +75,6 @@ type Message {
   from: User!
   to: User!
   chat: Chat!
-}
-
-type UserProfile {
-  user: User!
-  posts: [Post!]!
+  createdAt: String
+  updatedAt: String
 }

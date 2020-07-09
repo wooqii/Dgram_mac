@@ -25,7 +25,7 @@ export const sendSecretMail = (address, secret) => {
     from: "daniel@ceight.io", 
     to: address,
     subject: "🔒Login Secret for Dgram🔒",
-    html: `Hello! Your login secret is ${secret}.<br/>Copy paste on the app/website to log in`
+    html: `Hello! Your login secret is <b>${secret}</b>.<br/>Copy paste on the app/website to log in`
   };
   return sendMail(email);
 };

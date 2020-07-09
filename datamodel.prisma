@@ -1,6 +1,6 @@
 type User {
   id: ID! @id
-	avatar: String
+  avatar: String
   username: String! @unique
   email: String! @unique
   firstName: String @default(value: "")
@@ -13,16 +13,17 @@ type User {
   comments: [Comment!]! @relation(name: "CommentsOfUser", onDelete: CASCADE)
   chat: [Chat!]!
   loginSecret: String
-}
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt}
 
 type Post {
   id: ID! @id
   location: String
   caption: String!
-  creator: User @relation(name: "PostsOfUser")
+  creator: User! @relation(name: "PostsOfUser")
   files: [File!]! @relation(name: "FilesOfPost", onDelete: CASCADE)
   likes: [Like!]! @relation(name: "LikeOfPost", onDelete: CASCADE)
-  comments: [Comment!]! @relation(name: "CommentOfPost", onDelete: CASCADE)
+  comments: [Comment!] @relation(name: "CommentOfPost", onDelete: CASCADE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
@@ -56,6 +57,8 @@ type Chat {
   id: ID! @id
   participants: [User!]!
   messages: [Message!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Message {
@@ -64,4 +67,6 @@ type Message {
   from: User! @relation(name: "From")
   to: User! @relation(name: "To")
   chat: Chat!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
