@@ -7,7 +7,8 @@ export default {
             isAuthenticated(request);
             const { text, postId } = args;
             const { user } = request;
-            const comment = await prisma.createComment({ user: {
+            const comment = await prisma.createComment({ 
+            user: {
                 connect: {
                     id: user.id
                 }
